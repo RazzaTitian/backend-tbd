@@ -1,5 +1,4 @@
 import psycopg2
-
 from config import CREDENTIALS
 
 
@@ -68,7 +67,7 @@ class Book:
         book_number = int(req['book_number'])
         book_name = req['book_name']
         publication_year = req['publication_year']
-        pages = int(req['book_number'])
+        pages = int(req['pages'])
         pname = req['pname']
         
         try:
@@ -95,25 +94,29 @@ class Book:
             return f'Error while connecting to PostgreSQL Database: {err}'
         
     def update_book(id, req):
-        book_number = req['book_number']
         book_name = req['book_name']
         publication_year = req['publication_year']
-        pages = req['pages']
+        pages = int(req['pages'])
         pname = req['pname']
+
+        print(pages)
         
         try:
-            db = psycopg2.connect(host=CREDENTIALS['HOSTNAME'],
-                                    port=CREDENTIALS['PORT'],
-                                    database=CREDENTIALS['DATABASE'],
-                                    user=CREDENTIALS['USER'],
-                                    password=CREDENTIALS['PASSWORD']
-                                    )
+            db = psycopg2.connect(
+                host=CREDENTIALS['HOSTNAME'],
+                port=CREDENTIALS['PORT'],
+                database=CREDENTIALS['DATABASE'],
+                user=CREDENTIALS['USER'],
+                password=CREDENTIALS['PASSWORD']
+            )
             c = db.cursor()
             # Use parameterized queries to prevent SQL injection
-            c.execute("""UPDATE book
-                        SET booknumber = %s, bookname = %s, publicationyear = %s, pages = %s, publishername = %s
-                        WHERE booknumber = %s""",
-                    (book_number, book_name, publication_year, pages, pname, id))
+            c.execute(
+                """UPDATE book
+                SET bookname = %s, publicationyear = %s, page = %s, publishername = %s
+                WHERE booknumber = %s""",
+                (book_name, publication_year, pages, pname, id)
+            )
             
             c.close()
             db.commit()
@@ -122,6 +125,7 @@ class Book:
             return 'success'
         
         except (psycopg2.Error, psycopg2.DatabaseError) as err:
+            print(f'Error while connecting to PostgreSQL Database: {err}')
             c.close()
             db.close()
             return f'Error while connecting to PostgreSQL Database: {err}'
@@ -147,8 +151,8 @@ class Book:
             return 'success'
         
         except (psycopg2.Error, psycopg2.DatabaseError) as err:
+            print(f'Error while connecting to PostgreSQL Database: {err}')
             c.close()
             db.close()
             return f'Error while connecting to PostgreSQL Database: {err}'
-        
     

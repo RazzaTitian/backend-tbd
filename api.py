@@ -81,9 +81,12 @@ def update_book(id):
             if result == 'success':
                 return jsonify({'message': 'Book updated successfully.'}), 200
             else:
+                print(result)
                 return jsonify({'message': result}), 500
             
+            
         except Exception as err:
+            print(err)
             return jsonify({'message': f'Error: {err}'}), 500
 
 # Endpoint to delete a book by its ID
@@ -93,12 +96,18 @@ def delete_book(id):
         return jsonify({'message': 'Restricted access.'}), 401
 
     if request.method == 'DELETE':
-        result = Book.delete_book(id)
-        
-        if result == 'success':
-            return jsonify({'message': 'Book deleted successfully.'}), 200
-        else:
-            return jsonify({'message': result}), 500
+        try:
+            result = Book.delete_book(id)
+            
+            if result == 'success':
+                return jsonify({'message': 'Book deleted successfully.'}), 200
+            else:
+                print(result)
+                return jsonify({'message': result}), 500
+
+        except Exception as err:
+            print(err)
+            return jsonify({'message': f'Error: {err}'}), 500
         
 
 
